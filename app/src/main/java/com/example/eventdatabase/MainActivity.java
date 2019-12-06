@@ -10,6 +10,9 @@ import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -27,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         //  Video to learn basic access to CalendarView Data
         //  https://www.youtube.com/watch?v=WNBE_3ZizaA
@@ -61,9 +66,16 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Please select Date", Toast.LENGTH_SHORT).show();
         }
         else {
-            allEvents.add(new Event(eventName, dateSelected, dateYear, dateMonth, dateDay));
+            Event newEvent = new Event(eventName, dateSelected, dateYear, dateMonth, dateDay);
+            allEvents.add(newEvent);
             eventNameET.setText("");    // clears out text
             Log.i("DENNA", "AL size: " + allEvents.size());
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("myEvent");
+
+            myRef.setValue(newEvent);
+
         }
 
     }
