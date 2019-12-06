@@ -10,14 +10,18 @@ import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
-    String dateSelected = "No date chosen";
-    int dateMonth;
-    int dateDay;
-    int dateYear;
+    private String dateSelected = "No date chosen";
+    private int dateMonth;
+    private int dateDay;
+    private int dateYear;
 
+    // this ArrayList is made public static so that it is accessible in the DisplayEventsActivity onCreate
+
+    public static ArrayList<Event> allEvents = new ArrayList<Event>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +61,24 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Please select Date", Toast.LENGTH_SHORT).show();
         }
         else {
+            allEvents.add(new Event(eventName, dateSelected, dateYear, dateMonth, dateDay));
+            eventNameET.setText("");    // clears out text
+            Log.i("DENNA", "AL size: " + allEvents.size());
+        }
+
+    }
+
+    public void showAllEventsButtonPressed(View v) {
+        // verify events have been saved to the ArrayList
+        if (allEvents.size() == 0 ) {
+            Toast.makeText(MainActivity.this, "No events have been entered", Toast.LENGTH_SHORT).show();
+        }
+
+        else {
             Intent intent = new Intent(MainActivity.this, DisplayEventsActivity.class);
-            intent.putExtra("name", eventName);
-            intent.putExtra("date", dateSelected);
-            intent.putExtra("month", dateMonth);
-            intent.putExtra("year", dateYear);
-            intent.putExtra("day", dateDay);
             startActivity(intent);
         }
 
     }
+
 }

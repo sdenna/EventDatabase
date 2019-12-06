@@ -1,6 +1,10 @@
 package com.example.eventdatabase;
 
-public class Event {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Event
+{
     private String eventName;
     private String eventDate;
     private int year;
@@ -62,4 +66,5 @@ public class Event {
 
 
     }
+
 }
