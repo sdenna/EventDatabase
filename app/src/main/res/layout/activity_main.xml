@@ -50,6 +50,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Show Events"
-        android:onClick="showAllEventsButtonPressed"/>
+        android:onClick="onRetrieve"/>
 
 </LinearLayout>

@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
 
@@ -17,17 +20,18 @@ public class DisplayEventsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_events);
 
-        // Get info from the event
         Intent intent = getIntent();
-
         EditText allEventsET = (EditText) findViewById(R.id.allEvents);
-
         String allEventsText = "";
 
-        for (Event e: MainActivity.allEvents)
+        // this arraylist was populated by the firebase database.
+
+        for (Event e: MainActivity.allEventsFirebase)
             allEventsText += e.toString() + "\n";
 
         allEventsET.setText(allEventsText);
-
     }
+
+
+
 }
