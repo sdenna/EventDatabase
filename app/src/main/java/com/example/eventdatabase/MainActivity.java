@@ -3,10 +3,12 @@ package com.example.eventdatabase;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                                                      dateDay = day;
 
                                                      dateSelected = date;
+                                                     closeKeyboard();
                                                  }
                                              }
         );
@@ -106,23 +109,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * This method is called when the code is NOT using the firebase database for storage and is only storing
-     * temporarily in a static arraylist.  Once the app refreshes, all data is deleted.
+     * This method will be closed to minimize the entry keyboard of the Activity
+     * When we get the current view, it is the view that has focus, which is the keyboard
      *
-     * @param v
+     * Source:  https://www.youtube.com/watch?v=CW5Xekqfx3I
      */
-//    public void showAllEventsButtonPressed(View v) {
-//        // verify events have been saved to the ArrayList
-//        if (allEvents.size() == 0 ) {
-//            Toast.makeText(MainActivity.this, "No events have been entered", Toast.LENGTH_SHORT).show();
-//        }
-//
-//        else {
-//            Intent intent = new Intent(MainActivity.this, DisplayEventsActivity.class);
-//            startActivity(intent);
-//        }
-//
-//    }
+    private void closeKeyboard() {
+        View view = this.getCurrentFocus();     // view will refer to the keyboard
+        if (view != null ){                     // if there is a view that has focus
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 
     /**
      * This method is called to retrieve the data from firebase.  Currently it is simply
@@ -140,14 +138,10 @@ public class MainActivity extends AppCompatActivity {
         database.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // removes all elements in arraylist since this same arraylist is used each
-                // time and we dont want to keep re-adding the same existing elements to our display
-
-                allEventsFirebase.clear();
+                allEventsFirebase.clear();      // emptys arraylist to start fresh on each display
 
                 // This gets another snapshot for the events folder - essentially going
                 // one level into the database
-
                 DataSnapshot events = dataSnapshot.child("events");
 
                 for (DataSnapshot item: events.getChildren()) {
@@ -160,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
                            Integer.valueOf(item.child("day").getValue().toString())
                    ));
                 }
-
                 // starts intent that will display this new data that has been saved into the arraylist
                 // since we used a single value event the data will not continually update
 
@@ -176,6 +169,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 
 

@@ -5,16 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DisplayEventsActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_margin="15dp">
 
 
-    <EditText
-        android:id="@+id/allEvents"
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="textMultiLine"
-        android:text="put all events here"/>
+        android:layout_height="match_parent"
+        android:id="@+id/eventList">
+    </ListView>
+
+
 
 </LinearLayout>
