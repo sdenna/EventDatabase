@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
 
     // this ArrayList is made public static so that it is accessible in the DisplayEventsActivity onCreate
 
-    public static ArrayList<Event> allEvents = new ArrayList<Event>();
     public static ArrayList<Event> allEventsFirebase = new ArrayList<Event>();
 
     @Override
