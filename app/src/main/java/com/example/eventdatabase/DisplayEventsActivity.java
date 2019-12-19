@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -39,6 +41,18 @@ public class DisplayEventsActivity extends AppCompatActivity {
         CustomAdapter customAdapter = new CustomAdapter();
         allEventsListView.setAdapter(customAdapter);
 
+        // Referenced for syntax: https://www.youtube.com/watch?v=XyxT8IQoZkc
+        // Create a setOnItemClickListener for the listView to find out which element they clicked on
+
+        allEventsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(DisplayEventsActivity.this, "You clicked on: " +
+                        MainActivity.allEventsFirebase.get(i).getEventName(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
 
   /** The default way to do this, without a custom adapter
         // We need to create a listAdapter that tells us how the Listview should look and where
@@ -55,14 +69,16 @@ public class DisplayEventsActivity extends AppCompatActivity {
     }
 
 
+
+
     public void backToHome(View v) {
         Intent intent = new Intent(DisplayEventsActivity.this, MainActivity.class);
         startActivity(intent);
     }
 
-    //Referred to this video regarding CustomAdapter and creating the custom class:
-    //https://www.youtube.com/watch?v=FKUlw7mFXRM -->
-
+    /**Referred to this video regarding CustomAdapter and creating the custom class:
+    * https://www.youtube.com/watch?v=FKUlw7mFXRM -->
+     **/
 
     class CustomAdapter extends BaseAdapter {
 

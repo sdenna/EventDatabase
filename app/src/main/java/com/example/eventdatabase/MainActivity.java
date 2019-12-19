@@ -21,14 +21,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
+    private FirebaseDatabaseHelper dbHelper;
     private String dateSelected = "No date chosen";
     private int dateMonth;
     private int dateDay;
     private int dateYear;
+    private long dateLong;
+    private Date date;
 
     private DatabaseReference database;
 
@@ -42,24 +47,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         database = FirebaseDatabase.getInstance().getReference();
+        dbHelper = new FirebaseDatabaseHelper();
 
 
         //  Video to learn basic access to CalendarView Data
         //  https://www.youtube.com/watch?v=WNBE_3ZizaA
 
         CalendarView calendarView = findViewById(R.id.eventCalendarDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        final String selectedDate = sdf.format(new Date(calendarView.getDate()));
 
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener(){
                                                  @Override
                                                  public void onSelectedDayChange(CalendarView calendarView, int year, int month, int day) {
-                                                     String date =  (month + 1) + "/" + day + "/" + year;
-                                                     Log.i("DENNA", date);
+                                                     //String date =  (month + 1) + "/" + day + "/" + year;
+                                                    // Log.i("DENNA", date);
+                                                     SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+                                                     date = new Date(calendarView.getDate());
                                                      dateYear = year;
                                                      dateMonth = month + 1;
                                                      dateDay = day;
-
-                                                     dateSelected = date;
+                                                     dateLong = calendarView.getDate();
+                                                     dateSelected = sdf.format(new Date(calendarView.getDate()));;
                                                      closeKeyboard();
+
+                                            Log.i("DENNA", selectedDate);
+                                            Log.i("DENNA", date.toString());
+
+
+
                                                  }
                                              }
         );
@@ -78,37 +94,17 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Please select Date", Toast.LENGTH_SHORT).show();
         }
         else {
-            Event newEvent = new Event(eventName, dateSelected, dateYear, dateMonth, dateDay);
+            Event newEvent = new Event(eventName, dateSelected, dateYear, dateMonth, dateDay, dateLong, date);
             eventNameET.setText("");    // clears out text
 
-            /*
-             Before we can add the newEvent object to the database, we need to get an instance
-             of the db.  From here you can either get a reference database as a whole and all
-             elements are added at the root level or you can set a folder and have the reference
-             point to a folder within the database. It all depends on how you want to organize your data
 
-
-            */
-
-            // This will put the elements directly into database, not in a folder
-            // DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference();
-
-            // I wanted my elements to be pushed into a folder called events
-            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("/events");
-
-            // This gets the unique key of where to push the element and then sets the value at
-            // this key with the newEvent object we want to add to the database
-            String key = dbRef.push().getKey();
-            dbRef.child(key).setValue(newEvent);
-
-            // this works on my phone, not on the emulator
-            // check if the emulator has play store on it?  Or need wifi?
+            dbHelper.addEvent(newEvent);
         }
 
     }
 
     /**
-     * This method will be closed to minimize the entry keyboard of the Activity
+     * This method will be called to minimize the on screen keyboard in the Activity
      * When we get the current view, it is the view that has focus, which is the keyboard
      *
      * Source:  https://www.youtube.com/watch?v=CW5Xekqfx3I
@@ -137,12 +133,13 @@ public class MainActivity extends AppCompatActivity {
         database.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                allEventsFirebase.clear();      // emptys arraylist to start fresh on each display
+                allEventsFirebase.clear();      // empties arraylist to start fresh on each display
 
-                // This gets another snapshot for the events folder - essentially going
+                // This gets another snapshot from the events node - essentially going
                 // one level into the database
                 DataSnapshot events = dataSnapshot.child("events");
 
+                // this gets all elements in the events node so we can cycle through them in a loop
                 for (DataSnapshot item: events.getChildren()) {
 
                    allEventsFirebase.add(new Event(
@@ -150,9 +147,14 @@ public class MainActivity extends AppCompatActivity {
                            item.child("eventDate").getValue().toString(),
                            Integer.valueOf(item.child("year").getValue().toString()),
                            Integer.valueOf(item.child("month").getValue().toString()),
-                           Integer.valueOf(item.child("day").getValue().toString())
+                           Integer.valueOf(item.child("day").getValue().toString()),
+                           //(item.child("long").getValue())
+                           item.child("dateLong").getValue(Long.class),
+                           item.child("date").getValue(Date.class)
                    ));
                 }
+
+
                 // starts intent that will display this new data that has been saved into the arraylist
                 // since we used a single value event the data will not continually update
 
@@ -168,11 +170,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
-
 
 
 }

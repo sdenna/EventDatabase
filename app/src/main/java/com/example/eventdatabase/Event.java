@@ -3,6 +3,8 @@ package com.example.eventdatabase;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 public class Event
 {
     private String eventName;
@@ -10,14 +12,17 @@ public class Event
     private int year;
     private int month;
     private int day;
+    private long dateLong;
+    private Date date;
 
-    public Event(String eventName, String eventDate, int year, int month, int day) {
+    public Event(String eventName, String eventDate, int year, int month, int day, long dateLong, Date date) {
         this.eventName = eventName;
         this.eventDate = eventDate;
         this.year = year;
         this.month = month;
         this.day = day;
-
+        this.dateLong = dateLong;
+        this.date = date;
     }
 
     public String getEventName() {
@@ -37,6 +42,10 @@ public class Event
     public int getDay() {
         return day;
     }
+
+    public long getDateLong() {return dateLong; }
+
+    public Date getDate() {  return date; }
 
     public String toString() {
         String str = "";
