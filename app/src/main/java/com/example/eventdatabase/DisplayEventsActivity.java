@@ -27,17 +27,24 @@ import java.util.List;
 
 public class DisplayEventsActivity extends AppCompatActivity {
 
+    private ArrayList<Event> myEvents;
+    private FirebaseDatabaseHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_events);
 
-        // the arraylist allEventsFirebase was populated by the firebase database when the
-        // Show Events button is clicked on and this intent was started.
+        dbHelper = new FirebaseDatabaseHelper();
+
+        // This Activity received an arraylist of all the events pulled from firebase to populate the ListView with
         Intent intent = getIntent();
+        myEvents = intent.getParcelableArrayListExtra("events");
+        Log.i("Denna", "Inside Display Events, myEvents size is: " + myEvents.size());
 
         // Get a reference to the ListView element to display all Events in firebase
         ListView allEventsListView = (ListView) findViewById(R.id.eventList);
+        // CustomAdapter is an inner class defined below that details how to adapt this arraylist of data
         CustomAdapter customAdapter = new CustomAdapter();
         allEventsListView.setAdapter(customAdapter);
 
@@ -47,25 +54,20 @@ public class DisplayEventsActivity extends AppCompatActivity {
         allEventsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(DisplayEventsActivity.this, "You clicked on: " +
-                        MainActivity.allEventsFirebase.get(i).getEventName(), Toast.LENGTH_SHORT).show();
+
+                Event event = myEvents.get(i);
+                Log.i("Denna", "Inside DisplayEventsActivity, key is: " + event.getKey());
+
+                // start an intent to load the page to edit this element that has been clicked on
+                Intent intent = new Intent(DisplayEventsActivity.this, EditEventActivity.class);
+                intent.putExtra("event", event);
+
+
+                startActivity(intent);
             }
         });
 
 
-
-  /** The default way to do this, without a custom adapter
-        // We need to create a listAdapter that tells us how the Listview should look and where
-        // it gets it data from
-
-        ArrayAdapter<Event> listEventsAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_list_item_1, MainActivity.allEventsFirebase);
-
-
-        // Connect the rules define in the ArrayAdapter called listEventsAdapter to the ListView
-        // code for a basic listView
-         allEventsListView.setAdapter(listEventsAdapter);
-   **/
     }
 
 
@@ -84,7 +86,7 @@ public class DisplayEventsActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return MainActivity.allEventsFirebase.size();       // amount of elements in database
+            return myEvents.size();       // amount of elements in database
         }
 
         @Override
@@ -128,7 +130,7 @@ public class DisplayEventsActivity extends AppCompatActivity {
             TextView eventDateTV = (TextView) view.findViewById(R.id.eventDateTV);
 
             // Here I am getting the specific element in the database we are currently displaying
-            Event e = MainActivity.allEventsFirebase.get(i);
+            Event e = myEvents.get(i);
 
             // Set the correct image, event name, and event date for the Event object we are
             // displaying in the list
