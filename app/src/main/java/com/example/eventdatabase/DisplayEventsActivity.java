@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+// a useful link
+// https://www.techotopia.com/index.php/A_Firebase_Realtime_Database_List_Data_Tutorial
+
 public class DisplayEventsActivity extends AppCompatActivity {
 
     private ArrayList<Event> myEvents;

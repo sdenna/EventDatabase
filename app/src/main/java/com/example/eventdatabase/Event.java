@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.text.ParseException;
-import java.util.Date;
 
 /**
  * This class implements the Parcelable interface so that Event objects can be passed through the intent
@@ -116,6 +115,11 @@ public class Event implements Parcelable
     }
 
 
+    /**
+     * This method creates the display ready version of the Event that will show up
+     * in the listview when we show all events.
+     * @return
+     */
     public String toString() {
         String str = "";
         if (month == 1)
@@ -144,16 +148,14 @@ public class Event implements Parcelable
             str += "Dec ";
 
 
+        // Extra space to keep it looking uniform in listview
         if (day < 10)
             str += "  ";
 
         str += day;
-
         str += ", " + year + "   " + eventName;
 
         return str;
-
-
     }
 
     @Override
