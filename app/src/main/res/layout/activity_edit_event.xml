@@ -39,7 +39,7 @@
 
     <Button
         android:id="@+id/editButton"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Save Event Data"
         android:onClick="updateEventData"
@@ -47,7 +47,7 @@
 
     <Button
         android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Delete this Event"
         android:onClick="deleteEventData"
@@ -56,9 +56,17 @@
 
     <Button
         android:id="@+id/showAllButton"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Home"
+        android:text="Show All Events"
+        android:onClick="onRetrieve"
+        android:layout_gravity="center" />
+
+    <Button
+        android:id="@+id/homeButton"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Home Screen"
         android:onClick="onHome"
         android:layout_gravity="center" />
 

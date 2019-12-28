@@ -28,26 +28,18 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     private FirebaseDatabaseHelper dbHelper;
-    private ArrayList<Event> eventsArrayList =  new ArrayList<>();;
 
     private String dateSelected = "No date chosen";
     private int dateMonth;
     private int dateDay;
     private int dateYear;
-    private long dateLong;
-    private Date date;
-
-    private DatabaseReference database;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        database = FirebaseDatabase.getInstance().getReference().child("events");
         dbHelper = new FirebaseDatabaseHelper();
-        //eventsArrayList = new ArrayList<>();
 
         //  Video to learn basic access to CalendarView Data
         //  https://www.youtube.com/watch?v=WNBE_3ZizaA
@@ -59,21 +51,17 @@ public class MainActivity extends AppCompatActivity {
                                                  @Override
                                                  public void onSelectedDayChange(CalendarView calendarView, int year, int month, int day) {
                                                      dateSelected =  (month + 1) + "/" + day + "/" + year;
-                                                     //date = new Date(calendarView.getDate());
                                                      dateYear = year;
                                                      dateMonth = month + 1;
                                                      dateDay = day;
                                                      closeKeyboard();
-                                                     Log.i("Denna", "dateYear: " + dateYear + "dateMonth: " + dateMonth);
                                                  }
                                              }
         );
-
     }
 
 
     public void addEventButtonPressed(View v) {
-
         EditText eventNameET = (EditText) findViewById(R.id.eventName);
         String eventName = eventNameET.getText().toString();
 
@@ -116,22 +104,11 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
 
-//    public void showAllEvents(View v) {
-//        Intent intent = new Intent(MainActivity.this, DisplayEventsActivity.class);
-//        ArrayList<Event> list = dbHelper.getAllEvents();
-//        Log.i("Denna", list.toString());
-//        intent.putExtra("events", list);
-//        startActivity(intent);
-//
-//    }
 
     public void onRetrieve(View v){
-        database.addListenerForSingleValueEvent(new ValueEventListener() {
+        dbHelper.getDatabaseReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                // This helper method gets an array list of all the events in the firebase database
-               // ArrayList<Event> currentEvents = dbHelper.populateEventArrayList(dataSnapshot);
                 ArrayList<Event> currentEvents = new ArrayList<Event>();
 
                 for (DataSnapshot item : dataSnapshot.getChildren())
@@ -143,8 +120,6 @@ public class MainActivity extends AppCompatActivity {
                             Integer.valueOf(item.child("month").getValue().toString()),
                             Integer.valueOf(item.child("day").getValue().toString()),
                             item.child("key").getValue().toString());
-
-
                     currentEvents.add(e);
                 }
 
@@ -152,18 +127,15 @@ public class MainActivity extends AppCompatActivity {
                 // since we used a single value event the data will not continually update
 
                 Intent intent = new Intent(MainActivity.this, DisplayEventsActivity.class);
-               // intent.putExtra("events", currentEvents);
                 intent.putExtra("events", currentEvents);
                 startActivity(intent);
             }
 
-
-            // This method is required for it the listener to work.
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.i("callError", "There has been an Error with database retrieval");
             }
         });
-    }
 
+    }
 }

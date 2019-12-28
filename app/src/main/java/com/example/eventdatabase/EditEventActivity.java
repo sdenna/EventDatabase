@@ -20,7 +20,6 @@ import java.util.Date;
 
 public class EditEventActivity extends AppCompatActivity {
 
-    private DatabaseReference database;
     private FirebaseDatabaseHelper dbHelper;
     private EditText eventNameET;
     private EditText eventDateET;
@@ -63,7 +62,11 @@ public class EditEventActivity extends AppCompatActivity {
                 int day =  Integer.parseInt(newDate.substring(3, 5));
                 int year =  Integer.parseInt(newDate.substring(6));
 
-                dbHelper.updateEvent(keyToUpdate, newName, newDate, month, day, year);
+                if (month > 0 && month < 13 && day > 0 && day < 32 )
+                    dbHelper.updateEvent(keyToUpdate, newName, newDate, month, day, year);
+                else
+                    Toast.makeText(EditEventActivity.this, "Please enter a valid month/day", Toast.LENGTH_SHORT).show();
+
             }
             catch (Exception e) {
                 Toast.makeText(EditEventActivity.this, "Please enter date as MM/DD/YYYY", Toast.LENGTH_SHORT).show();
@@ -81,4 +84,38 @@ public class EditEventActivity extends AppCompatActivity {
                 Intent intent = new Intent(EditEventActivity.this, MainActivity.class);
                 startActivity(intent);
             }
+
+    public void onRetrieve(View v){
+        dbHelper.getDatabaseReference().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Event> currentEvents = new ArrayList<Event>();
+
+                for (DataSnapshot item : dataSnapshot.getChildren())
+                {
+                    Event e = new Event(
+                            item.child("eventName").getValue().toString(),
+                            item.child("eventDate").getValue().toString(),
+                            Integer.valueOf(item.child("year").getValue().toString()),
+                            Integer.valueOf(item.child("month").getValue().toString()),
+                            Integer.valueOf(item.child("day").getValue().toString()),
+                            item.child("key").getValue().toString());
+                    currentEvents.add(e);
+                }
+
+                // starts intent that will display this new data that has been saved into the arraylist
+                // since we used a single value event the data will not continually update
+
+                Intent intent = new Intent(EditEventActivity.this, DisplayEventsActivity.class);
+                intent.putExtra("events", currentEvents);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.i("callError", "There has been an Error with database retrieval");
+            }
+        });
+
+    }
 }

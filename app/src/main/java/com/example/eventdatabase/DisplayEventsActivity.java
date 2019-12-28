@@ -28,19 +28,15 @@ import java.util.List;
 public class DisplayEventsActivity extends AppCompatActivity {
 
     private ArrayList<Event> myEvents;
-    private FirebaseDatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_events);
 
-        dbHelper = new FirebaseDatabaseHelper();
-
         // This Activity received an arraylist of all the events pulled from firebase to populate the ListView with
         Intent intent = getIntent();
         myEvents = intent.getParcelableArrayListExtra("events");
-        Log.i("Denna", "Inside Display Events, myEvents size is: " + myEvents.size());
 
         // Get a reference to the ListView element to display all Events in firebase
         ListView allEventsListView = (ListView) findViewById(R.id.eventList);
@@ -56,20 +52,14 @@ public class DisplayEventsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 Event event = myEvents.get(i);
-                Log.i("Denna", "Inside DisplayEventsActivity, key is: " + event.getKey());
 
                 // start an intent to load the page to edit this element that has been clicked on
                 Intent intent = new Intent(DisplayEventsActivity.this, EditEventActivity.class);
                 intent.putExtra("event", event);
-
-
                 startActivity(intent);
             }
         });
-
-
     }
-
 
 
 
