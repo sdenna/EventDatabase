@@ -58,6 +58,7 @@ public class FirebaseDatabaseHelper {
         return mReferenceEvents;
     }
 
+    public ArrayList<Event> getEventsArrayList() { return eventsArrayList; }
 
     public void addEvent(Event event) {
         // This gets the unique key of where to push the element and then sets the value at

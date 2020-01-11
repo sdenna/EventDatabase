@@ -7,6 +7,8 @@
 <!--Referred to this video:
     https://www.youtube.com/watch?v=FKUlw7mFXRM -->
 
+
+
     <ImageView
         android:id="@+id/eventImageView"
         android:layout_width="80dp"
@@ -39,3 +41,4 @@
         android:text="TextView"
         android:textSize="18sp" />
 </RelativeLayout>
+
